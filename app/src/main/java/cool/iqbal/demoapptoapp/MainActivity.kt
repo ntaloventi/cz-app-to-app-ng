@@ -24,8 +24,7 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener {
 
         val btnCb: Button = findViewById(R.id.btnCb)
         btnCb.setOnClickListener {
-            jumpApp.withData(data)
-            jumpApp.checkBalance()
+            jumpApp.withData(data).checkBalance()
         }
 
         val btnTf: Button = findViewById(R.id.btnTf)
@@ -33,22 +32,19 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener {
             data.amount = 150000
             data.beneBankCode = "008"
             data.beneAccountNo = "15500088992"
-            jumpApp.withData(data)
-            jumpApp.transfer()
+            jumpApp.withData(data).transfer()
         }
 
         val btnWd: Button = findViewById(R.id.btnWd)
         btnWd.setOnClickListener {
             data.amount = 160000
-            jumpApp.withData(data)
-            jumpApp.cashWithdraw()
+            jumpApp.withData(data).cashWithdraw()
         }
 
         val btnDp: Button = findViewById(R.id.btnDp)
         btnDp.setOnClickListener {
             data.amount = 170000
-            jumpApp.withData(data)
-            jumpApp.cashDeposit()
+            jumpApp.withData(data).cashDeposit()
         }
 
     }
