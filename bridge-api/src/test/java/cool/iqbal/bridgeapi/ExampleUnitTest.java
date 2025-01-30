@@ -1,4 +1,4 @@
-package cool.iqbal.jump_app;
+package cool.iqbal.bridgeapi;
 
 import org.junit.Test;
 

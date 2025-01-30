@@ -1,17 +1,13 @@
-package cool.iqbal.jump_app;
+package cool.iqbal.jumpapp;
 
 import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.Objects;
 
 public class JumApp {
     private static JumpBuilder jumpBuilder;
@@ -25,7 +21,7 @@ public class JumApp {
         return jumpBuilder.jumApp;
     }
 
-    public JumApp withData(MiniAtmRequest data){
+    public JumApp withData(cool.iqbal.jumpapp.MiniAtmRequest data){
         if (jumpBuilder == null){
             jumpBuilder = new JumpBuilder();
         }
@@ -34,23 +30,23 @@ public class JumApp {
     }
 
     public void openApp(){
-        jumpBuilder.attemptRequestNg(ActionName.Action_Open);
+        jumpBuilder.attemptRequestNg(cool.iqbal.jumpapp.ActionName.Action_Open);
     }
 
     public void checkBalance(){
-        jumpBuilder.attemptRequestNg(ActionName.Action_Check_Balance);
+        jumpBuilder.attemptRequestNg(cool.iqbal.jumpapp.ActionName.Action_Check_Balance);
     }
 
     public void transfer(){
-        jumpBuilder.attemptRequestNg(ActionName.Action_Transfer);
+        jumpBuilder.attemptRequestNg(cool.iqbal.jumpapp.ActionName.Action_Transfer);
     }
 
     public void cashWithdraw(){
-        jumpBuilder.attemptRequestNg(ActionName.Action_Cash_Withdrawal);
+        jumpBuilder.attemptRequestNg(cool.iqbal.jumpapp.ActionName.Action_Cash_Withdrawal);
     }
 
     public void cashDeposit(){
-        jumpBuilder.attemptRequestNg(ActionName.Action_Cash_Deposit);
+        jumpBuilder.attemptRequestNg(cool.iqbal.jumpapp.ActionName.Action_Cash_Deposit);
     }
 
     private static class JumpBuilder {
@@ -73,7 +69,7 @@ public class JumApp {
             });
         }
 
-        public void setData(MiniAtmRequest data) {
+        public void setData(cool.iqbal.jumpapp.MiniAtmRequest data) {
             this.data = data;
         }
 
@@ -81,7 +77,7 @@ public class JumApp {
             this.listener = listener;
         }
 
-        public void attemptRequestNg(ActionName actionName) {
+        public void attemptRequestNg(cool.iqbal.jumpapp.ActionName actionName) {
             Intent intent = new Intent();
             StringBuilder sbUri = new StringBuilder();
             sbUri.append("cashlez://miniatm.");
@@ -92,7 +88,7 @@ public class JumApp {
             sbUri.append(data.getAmount());
             sbUri.append("&callback=");
             sbUri.append(data.getCallback());
-            if (actionName.equals(ActionName.Action_Transfer)){
+            if (actionName.equals(cool.iqbal.jumpapp.ActionName.Action_Transfer)){
                 sbUri.append("&beneBankCode=");
                 sbUri.append(data.getBeneBankCode());
                 sbUri.append("&beneAccountNo=");

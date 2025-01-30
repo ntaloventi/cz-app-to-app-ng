@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "DemoAppToApp"
 include ':app'
 include ':jump-app'
+include ':bridge-api'
