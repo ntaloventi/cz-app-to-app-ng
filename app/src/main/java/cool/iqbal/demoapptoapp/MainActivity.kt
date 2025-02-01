@@ -66,31 +66,30 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
 
         /*payment request */
 
-        val host = "https://learning-cat-saving.ngrok-free.app/MmBridgeApi/"
+        val host = "https://iqhost.icu/"
         val apiKey = "Some-Api-Key"
-        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val currentDateTime = formatter.format(Date())
         val bridgeApi = BridgeApi.initBridge(this, this).withHost(host).withApiKey(apiKey)
         val paymentDataRequest = PaymentRequest().apply {
             posReqType = "Kiosk"
-            requestId = "Auto-Id"
-            clientId = "Client-Id"
+            requestId = "Req-" + System.currentTimeMillis()
+            clientId = "Client-" + System.currentTimeMillis()
             deviceUser = "iqbal"
-            invoiceNumber = "inv-001"
+            invoiceNumber = "inv-" + System.currentTimeMillis()
             amount = 10000
             status = "Pending"
-            requestAt = currentDateTime
         }
 
         val btnCdcp:Button = findViewById(R.id.btnCdcp)
         btnCdcp.setOnClickListener{
             paymentDataRequest.paymentMethod = PaymentMethod.CDCP.name
+            paymentDataRequest.requestAt = getCurrentStamp()
             bridgeApi.attemptRequestPayment(paymentDataRequest)
         }
 
         val btnQris:Button = findViewById(R.id.btnQris)
         btnQris.setOnClickListener{
             paymentDataRequest.paymentMethod = PaymentMethod.QRIS.name
+            paymentDataRequest.requestAt = getCurrentStamp()
             bridgeApi.attemptRequestPayment(paymentDataRequest)
         }
 
@@ -120,11 +119,30 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
 
     override fun onPosted(responseBody: String?) {
         Log.e("TAG", "onPosted: $responseBody")
-        runOnUiThread { tvResult?.text = responseBody }
+        updateResult("onPosted: $responseBody")
     }
 
     override fun onError(error: String?) {
         Log.e("TAG", "onError: $error" )
-        runOnUiThread { tvResult?.text = error }
+        updateResult("onError: $error")
+    }
+
+    override fun onSseData(data: String?) {
+        Log.e("TAG", "onSseData: $data" )
+        updateResult("onSseData: $data")
+    }
+
+    override fun onInfo(info: String?) {
+        Log.e("TAG", "onInfo: $info" )
+        updateResult("onInfo: $info")
+    }
+
+    private fun getCurrentStamp(): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return formatter.format(Date())
+    }
+
+    private fun updateResult(result: String?) {
+        runOnUiThread { tvResult?.text = result }
     }
 }

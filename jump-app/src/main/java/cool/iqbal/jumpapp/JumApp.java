@@ -21,7 +21,7 @@ public class JumApp {
         return jumpBuilder.jumApp;
     }
 
-    public JumApp withData(cool.iqbal.jumpapp.MiniAtmRequest data){
+    public JumApp withData(MiniAtmRequest data){
         if (jumpBuilder == null){
             jumpBuilder = new JumpBuilder();
         }
@@ -30,23 +30,23 @@ public class JumApp {
     }
 
     public void openApp(){
-        jumpBuilder.attemptRequestNg(cool.iqbal.jumpapp.ActionName.Action_Open);
+        jumpBuilder.attemptRequestNg(ActionName.Action_Open);
     }
 
     public void checkBalance(){
-        jumpBuilder.attemptRequestNg(cool.iqbal.jumpapp.ActionName.Action_Check_Balance);
+        jumpBuilder.attemptRequestNg(ActionName.Action_Check_Balance);
     }
 
     public void transfer(){
-        jumpBuilder.attemptRequestNg(cool.iqbal.jumpapp.ActionName.Action_Transfer);
+        jumpBuilder.attemptRequestNg(ActionName.Action_Transfer);
     }
 
     public void cashWithdraw(){
-        jumpBuilder.attemptRequestNg(cool.iqbal.jumpapp.ActionName.Action_Cash_Withdrawal);
+        jumpBuilder.attemptRequestNg(ActionName.Action_Cash_Withdrawal);
     }
 
     public void cashDeposit(){
-        jumpBuilder.attemptRequestNg(cool.iqbal.jumpapp.ActionName.Action_Cash_Deposit);
+        jumpBuilder.attemptRequestNg(ActionName.Action_Cash_Deposit);
     }
 
     private static class JumpBuilder {
@@ -69,7 +69,7 @@ public class JumApp {
             });
         }
 
-        public void setData(cool.iqbal.jumpapp.MiniAtmRequest data) {
+        public void setData(MiniAtmRequest data) {
             this.data = data;
         }
 
@@ -77,7 +77,7 @@ public class JumApp {
             this.listener = listener;
         }
 
-        public void attemptRequestNg(cool.iqbal.jumpapp.ActionName actionName) {
+        public void attemptRequestNg(ActionName actionName) {
             Intent intent = new Intent();
             StringBuilder sbUri = new StringBuilder();
             sbUri.append("cashlez://miniatm.");
@@ -88,7 +88,7 @@ public class JumApp {
             sbUri.append(data.getAmount());
             sbUri.append("&callback=");
             sbUri.append(data.getCallback());
-            if (actionName.equals(cool.iqbal.jumpapp.ActionName.Action_Transfer)){
+            if (actionName.equals(ActionName.Action_Transfer)){
                 sbUri.append("&beneBankCode=");
                 sbUri.append(data.getBeneBankCode());
                 sbUri.append("&beneAccountNo=");

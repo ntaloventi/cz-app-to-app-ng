@@ -6,6 +6,6 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface ApiService {
-    @POST("payment-request")
+    @POST("MmBridgeApi/payment-request")
     Call<ResponseBody> requestPayment(@Body PaymentRequest paymentRequest);
 }
