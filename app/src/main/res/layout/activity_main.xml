@@ -16,30 +16,35 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/btnCb"
         android:text="Check Balance"
         android:layout_marginTop="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toStartOf="@id/btnTf"/>
 
     <Button
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/btnTf"
         android:text="Transfer"
-        app:layout_constraintTop_toBottomOf="@id/btnCb"
-        app:layout_constraintStart_toStartOf="@id/btnCb"
-        app:layout_constraintEnd_toEndOf="@id/btnCb"/>
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintTop_toTopOf="@id/btnCb"
+        app:layout_constraintStart_toEndOf="@id/btnCb"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/btnWd"
         android:text="Withdraw"
-        app:layout_constraintTop_toBottomOf="@id/btnTf"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/btnCb"
         app:layout_constraintStart_toStartOf="@id/btnCb"
         app:layout_constraintEnd_toEndOf="@id/btnCb"/>
 
@@ -48,17 +53,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/btnDp"
         android:text="Deposit"
-        app:layout_constraintTop_toBottomOf="@id/btnWd"
-        app:layout_constraintStart_toStartOf="@id/btnCb"
-        app:layout_constraintEnd_toEndOf="@id/btnCb"/>
+        app:layout_constraintTop_toTopOf="@id/btnWd"
+        app:layout_constraintStart_toStartOf="@id/btnTf"
+        app:layout_constraintEnd_toEndOf="@id/btnTf"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cdcp"
-        android:layout_margin="10dp"
-        app:layout_constraintTop_toBottomOf="@id/btnDp"
-        app:layout_constraintStart_toStartOf="parent"/>
 
     <Button
         android:layout_width="0dp"
@@ -66,27 +64,32 @@
         android:id="@+id/btnCdcp"
         android:text="Card Payment"
         android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@id/btnDp"
+        app:layout_constraintTop_toBottomOf="@id/btnWd"
         app:layout_constraintStart_toStartOf="@id/btnCb"
         app:layout_constraintEnd_toEndOf="@id/btnCb"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Qris"
-        android:layout_margin="10dp"
-        app:layout_constraintTop_toBottomOf="@id/btnCdcp"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:text="Cdcp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@id/btnCdcp"
+        app:layout_constraintStart_toStartOf="@id/btnCdcp"/>
 
     <Button
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/btnQris"
         android:text="Qris Payment"
-        android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@id/btnCdcp"
-        app:layout_constraintStart_toStartOf="@id/btnCb"
-        app:layout_constraintEnd_toEndOf="@id/btnCb"/>
+        app:layout_constraintTop_toTopOf="@id/btnCdcp"
+        app:layout_constraintStart_toStartOf="@id/btnTf"
+        app:layout_constraintEnd_toEndOf="@id/btnTf"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Qris"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@id/btnQris"
+        app:layout_constraintStart_toStartOf="@id/btnQris"/>
 
     <TextView
         android:layout_width="match_parent"

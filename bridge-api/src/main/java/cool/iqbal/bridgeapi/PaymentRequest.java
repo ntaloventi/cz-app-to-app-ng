@@ -22,6 +22,9 @@ public class PaymentRequest {
     @SerializedName("request_at")
     private String requestAt;
 
+    @SerializedName("callback_url")
+    private String callbackUrl;
+
     public String getPosReqType() {
         return posReqType;
     }
@@ -92,5 +95,13 @@ public class PaymentRequest {
 
     public void setRequestAt(String requestAt) {
         this.requestAt = requestAt;
+    }
+
+    public String getCallbackUrl() {
+        return callbackUrl;
+    }
+
+    public void setCallbackUrl(String callbackUrl) {
+        this.callbackUrl = callbackUrl;
     }
 }

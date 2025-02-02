@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.GsonBuilder
 import cool.iqbal.bridgeapi.BridgeApi
 import cool.iqbal.bridgeapi.BridgeApi.BridgeListener
 import cool.iqbal.bridgeapi.PaymentRequest
@@ -16,6 +17,7 @@ import cool.iqbal.jumpapp.MiniAtmRequest
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         CDCP
     }
     private var tvResult:TextView? = null
+    val gson = GsonBuilder().setPrettyPrinting().create()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +49,7 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
 
         val btnTf: Button = findViewById(R.id.btnTf)
         btnTf.setOnClickListener {
-            data.amount = 150000
+            data.amount = getRandomAmount()
             data.beneBankCode = "008"
             data.beneAccountNo = "15500088992"
             jumpApp.withData(data).transfer()
@@ -54,13 +57,13 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
 
         val btnWd: Button = findViewById(R.id.btnWd)
         btnWd.setOnClickListener {
-            data.amount = 160000
+            data.amount = getRandomAmount()
             jumpApp.withData(data).cashWithdraw()
         }
 
         val btnDp: Button = findViewById(R.id.btnDp)
         btnDp.setOnClickListener {
-            data.amount = 170000
+            data.amount = getRandomAmount()
             jumpApp.withData(data).cashDeposit()
         }
 
@@ -71,16 +74,17 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         val bridgeApi = BridgeApi.initBridge(this, this).withHost(host).withApiKey(apiKey)
         val paymentDataRequest = PaymentRequest().apply {
             posReqType = "Kiosk"
-            requestId = "Req-" + System.currentTimeMillis()
-            clientId = "Client-" + System.currentTimeMillis()
+            clientId = "Client-00001"
             deviceUser = "iqbal"
-            invoiceNumber = "inv-" + System.currentTimeMillis()
-            amount = 10000
             status = "Pending"
+            callbackUrl = "https://learning-cat-saving.ngrok-free.app/api-callback"
         }
 
         val btnCdcp:Button = findViewById(R.id.btnCdcp)
         btnCdcp.setOnClickListener{
+            paymentDataRequest.amount = getRandomAmount().toLong()
+            paymentDataRequest.requestId = "ReqId-" + getStampId()
+            paymentDataRequest.invoiceNumber = "inv-" + getStampId()
             paymentDataRequest.paymentMethod = PaymentMethod.CDCP.name
             paymentDataRequest.requestAt = getCurrentStamp()
             bridgeApi.attemptRequestPayment(paymentDataRequest)
@@ -88,6 +92,9 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
 
         val btnQris:Button = findViewById(R.id.btnQris)
         btnQris.setOnClickListener{
+            paymentDataRequest.amount = getRandomAmount().toLong()
+            paymentDataRequest.requestId = "ReqId-" + getStampId()
+            paymentDataRequest.invoiceNumber = "inv-" + getStampId()
             paymentDataRequest.paymentMethod = PaymentMethod.QRIS.name
             paymentDataRequest.requestAt = getCurrentStamp()
             bridgeApi.attemptRequestPayment(paymentDataRequest)
@@ -97,14 +104,14 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
 
     override fun onRawResult(result: Intent) {
         val rawResult = uriToHashMap(result.data)
-        Log.e("TAG", "onRawResult: $rawResult")
-        runOnUiThread { tvResult?.text = rawResult.toString() }
+        Log.i("TAG", "onRawResult: $rawResult")
+        updateResult(rawResult.toString())
     }
 
     override fun onCancel() {
         val msg = "Transaction Cancelled"
         Log.e("TAG", "onCancel: $msg")
-        runOnUiThread{ tvResult?.text = msg }
+        updateResult(msg)
     }
 
     private fun uriToHashMap(uri: Uri?): HashMap<String, String?> {
@@ -117,8 +124,16 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         return map
     }
 
+    fun getRandomAmount(): Int {
+        val min = 10_000
+        val max = 2_000_000
+        val step = 10_000
+
+        return Random.nextInt(min / step, (max / step) + 1) * step
+    }
+
     override fun onPosted(responseBody: String?) {
-        Log.e("TAG", "onPosted: $responseBody")
+        Log.i("TAG", "onPosted: $responseBody")
         updateResult("onPosted: $responseBody")
     }
 
@@ -127,19 +142,26 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         updateResult("onError: $error")
     }
 
-    override fun onSseData(data: String?) {
-        Log.e("TAG", "onSseData: $data" )
-        updateResult("onSseData: $data")
+    override fun onSseEvent(eventType: String?, data: String?) {
+        if (eventType.equals("update")){
+            val prettyJson = gson.toJson(gson.fromJson(data, Any::class.java))
+            updateResult(prettyJson)
+        }
+        Log.i(eventType, "onSseEvent: $data")
     }
 
     override fun onInfo(info: String?) {
-        Log.e("TAG", "onInfo: $info" )
+        Log.i("TAG", "onInfo: $info" )
         updateResult("onInfo: $info")
     }
 
     private fun getCurrentStamp(): String {
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return formatter.format(Date())
+    }
+
+    private fun getStampId(): String {
+        return (System.currentTimeMillis() /1000).toString()
     }
 
     private fun updateResult(result: String?) {

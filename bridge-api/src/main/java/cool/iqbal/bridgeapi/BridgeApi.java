@@ -108,11 +108,11 @@ public class BridgeApi {
 
         private void  subscribeSseEvent(){
             listener.onInfo("subscribeSseEvent");
-//            String hostUrl = "https://iqhost.icu/MmBridgeApi/payment-subscribe";  // packet riot cloudflare proxied [NOT WORKING]
-//            String hostUrl = "http://sse.iqhost.icu/MmBridgeApi/payment-subscribe"; // packet riot w/o cloudflare dns only [NOT WORKING] need ssl cert
-//            String hostUrl = "https://naughty-mountain-79948.pktriot.net/MmBridgeApi/payment-subscribe"; // packet riot subdomain [NOT WORKING]
-            String hostUrl = "https://learning-cat-saving.ngrok-free.app/MmBridgeApi/payment-subscribe"; // ngrok [SUCCESS]
-//            String hostUrl = "http://192.168.100.6:8000/MmBridgeApi/payment-subscribe"; // local lan [SUCCESS]
+//            String hostUrl = "https://iqhost.icu/MmBridgeApi/v1/payment-subscribe";  // packet riot cloudflare proxied [NOT WORKING]
+//            String hostUrl = "http://sse.iqhost.icu/MmBridgeApi/v1/payment-subscribe"; // packet riot w/o cloudflare dns only [NOT WORKING] need ssl cert
+//            String hostUrl = "https://naughty-mountain-79948.pktriot.net/MmBridgeApi/v1/payment-subscribe"; // packet riot subdomain [NOT WORKING]
+            String hostUrl = "https://learning-cat-saving.ngrok-free.app/MmBridgeApi/v1/payment-subscribe"; // ngrok [SUCCESS]
+//            String hostUrl = "http://192.168.100.6:8000/MmBridgeApi/v1/payment-subscribe"; // local lan [SUCCESS]
             Request request = new Request.Builder().url(hostUrl).build();
             OkSse okSse = new OkSse();
             ServerSentEvent sse = okSse.newServerSentEvent(request, this);
@@ -126,7 +126,10 @@ public class BridgeApi {
 
         @Override
         public void onMessage(ServerSentEvent sse, String id, String event, String message) {
-            listener.onSseData("Received event [" + event + "]: " + message);
+            listener.onSseEvent(event, message);
+            if (event.equals("update")){
+                sse.close();
+            }
         }
 
         @Override
@@ -158,7 +161,7 @@ public class BridgeApi {
     public interface BridgeListener {
         void onPosted(String responseBody);
         void onError(String error);
-        void onSseData(String data);
+        void onSseEvent(String eventType, String data);
         void onInfo(String info);
     }
 }
