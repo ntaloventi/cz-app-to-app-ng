@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.here.oksse.OkSse;
 import com.here.oksse.ServerSentEvent;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -90,51 +92,59 @@ public class BridgeApi {
                             listener.onPosted(responseBody);
 
                             //start listening server event
-                            subscribeSseEvent();
+                            subscribeSseEvent(paymentRequest);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else {
-                        listener.onError("Error: " + response.code());
+                        listener.onError(String.valueOf(response.code()));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    listener.onError("Failure: " +t.getMessage());
+                    listener.onError(t.getMessage());
                 }
             });
         }
 
-        private void  subscribeSseEvent(){
-            listener.onInfo("subscribeSseEvent");
-//            String hostUrl = "https://iqhost.icu/MmBridgeApi/v1/payment-subscribe";  // packet riot cloudflare proxied [NOT WORKING]
-//            String hostUrl = "http://sse.iqhost.icu/MmBridgeApi/v1/payment-subscribe"; // packet riot w/o cloudflare dns only [NOT WORKING] need ssl cert
-//            String hostUrl = "https://naughty-mountain-79948.pktriot.net/MmBridgeApi/v1/payment-subscribe"; // packet riot subdomain [NOT WORKING]
-            String hostUrl = "https://learning-cat-saving.ngrok-free.app/MmBridgeApi/v1/payment-subscribe"; // ngrok [SUCCESS]
-//            String hostUrl = "http://192.168.100.6:8000/MmBridgeApi/v1/payment-subscribe"; // local lan [SUCCESS]
-            Request request = new Request.Builder().url(hostUrl).build();
-            OkSse okSse = new OkSse();
-            ServerSentEvent sse = okSse.newServerSentEvent(request, this);
-            //sse.close();
+        private void  subscribeSseEvent(PaymentRequest paymentRequest){
+            try {
+                //String baseUrl = "http://192.168.100.6:8000/MmBridgeApi/v1/payment-subscribe"; // local lan [SUCCESS]
+                String baseUrl = "https://learning-cat-saving.ngrok-free.app/MmBridgeApi/v1/payment-subscribe"; // ngrok [SUCCESS]
+                Map<String, String> queryData = new HashMap<>();
+                queryData.put("client_id", paymentRequest.getClientId());
+                queryData.put("request_id", paymentRequest.getRequestId());
+                queryData.put("device_user", paymentRequest.getDeviceUser());
+
+                String hostUrl = baseUrl + "?" + Reused.mapToQueryParam(queryData);
+                listener.onInfo(hostUrl);
+
+                Request request = new Request.Builder().url(hostUrl).build();
+                OkSse okSse = new OkSse();
+                ServerSentEvent sse = okSse.newServerSentEvent(request, this);
+                //sse.close();
+            } catch (Exception e){
+                listener.onError(e.getMessage());
+            }
         }
 
         @Override
         public void onOpen(ServerSentEvent sse, okhttp3.Response response) {
-            listener.onInfo("onOpen called");
+            //listener.onInfo("onOpen called");
         }
 
         @Override
         public void onMessage(ServerSentEvent sse, String id, String event, String message) {
             listener.onSseEvent(event, message);
-            if (event.equals("update")){
+            if (event.equals("update") || event.equals("error")){
                 sse.close();
             }
         }
 
         @Override
         public void onComment(ServerSentEvent sse, String comment) {
-            listener.onInfo("onComment called " + comment);
+            listener.onInfo(comment);
         }
 
         @Override

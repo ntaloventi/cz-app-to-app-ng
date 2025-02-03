@@ -9,6 +9,8 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
+import com.google.gson.JsonSyntaxException
 import cool.iqbal.bridgeapi.BridgeApi
 import cool.iqbal.bridgeapi.BridgeApi.BridgeListener
 import cool.iqbal.bridgeapi.PaymentRequest
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         QRIS,
         CDCP
     }
+    private var tvTag:TextView? = null
     private var tvResult:TextView? = null
     val gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -34,6 +37,7 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        tvTag = findViewById(R.id.tvTag)
         tvResult = findViewById(R.id.tvResult)
 
         val jumpApp = JumApp.initJumpApp(this, this)
@@ -74,7 +78,7 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         val bridgeApi = BridgeApi.initBridge(this, this).withHost(host).withApiKey(apiKey)
         val paymentDataRequest = PaymentRequest().apply {
             posReqType = "Kiosk"
-            clientId = "Client-00001"
+            clientId = "CLID-9512DD2103143011"
             deviceUser = "iqbal"
             status = "Pending"
             callbackUrl = "https://learning-cat-saving.ngrok-free.app/api-callback"
@@ -102,18 +106,6 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
 
     }
 
-    override fun onRawResult(result: Intent) {
-        val rawResult = uriToHashMap(result.data)
-        Log.i("TAG", "onRawResult: $rawResult")
-        updateResult(rawResult.toString())
-    }
-
-    override fun onCancel() {
-        val msg = "Transaction Cancelled"
-        Log.e("TAG", "onCancel: $msg")
-        updateResult(msg)
-    }
-
     private fun uriToHashMap(uri: Uri?): HashMap<String, String?> {
         val map = HashMap<String, String?>()
         if (uri != null) {
@@ -124,35 +116,12 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         return map
     }
 
-    fun getRandomAmount(): Int {
+    private fun getRandomAmount(): Int {
         val min = 10_000
         val max = 2_000_000
         val step = 10_000
 
         return Random.nextInt(min / step, (max / step) + 1) * step
-    }
-
-    override fun onPosted(responseBody: String?) {
-        Log.i("TAG", "onPosted: $responseBody")
-        updateResult("onPosted: $responseBody")
-    }
-
-    override fun onError(error: String?) {
-        Log.e("TAG", "onError: $error" )
-        updateResult("onError: $error")
-    }
-
-    override fun onSseEvent(eventType: String?, data: String?) {
-        if (eventType.equals("update")){
-            val prettyJson = gson.toJson(gson.fromJson(data, Any::class.java))
-            updateResult(prettyJson)
-        }
-        Log.i(eventType, "onSseEvent: $data")
-    }
-
-    override fun onInfo(info: String?) {
-        Log.i("TAG", "onInfo: $info" )
-        updateResult("onInfo: $info")
     }
 
     private fun getCurrentStamp(): String {
@@ -164,7 +133,57 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         return (System.currentTimeMillis() /1000).toString()
     }
 
-    private fun updateResult(result: String?) {
-        runOnUiThread { tvResult?.text = result }
+    private fun isValidJson(input: String): Boolean {
+        return try {
+            JsonParser.parseString(input)
+            true
+        } catch (e: JsonSyntaxException) {
+            false
+        }
+    }
+
+    private fun updateResult(result: String?, tag: String) {
+        val stringToPrint = result?.takeIf { isValidJson(it) }
+            ?.let { gson.toJson(gson.fromJson(it, Any::class.java)) }
+            ?: result
+
+        runOnUiThread {
+            tvTag?.text = tag
+            tvResult?.text = stringToPrint
+        }
+    }
+
+    override fun onRawResult(result: Intent) {
+        val rawResult = uriToHashMap(result.data)
+        Log.i("TAG", "onRawResult: $rawResult")
+        updateResult(rawResult.toString(), "onRawResult")
+    }
+
+    override fun onCancel() {
+        val msg = "Transaction Cancelled"
+        Log.e("TAG", "onCancel: $msg")
+        updateResult(msg, "onCancel")
+    }
+
+    override fun onPosted(responseBody: String?) {
+        Log.i("TAG", "onPosted: $responseBody")
+        updateResult(responseBody, "onPosted")
+    }
+
+    override fun onError(error: String?) {
+        Log.e("TAG", "onError: $error" )
+        updateResult(error, "onError")
+    }
+
+    override fun onSseEvent(eventType: String?, data: String?) {
+        Log.i(eventType, "onSseEvent: $data")
+        if (!eventType.equals("heartbeat")){
+            updateResult(data, "onSseEvent - $eventType");
+        }
+    }
+
+    override fun onInfo(info: String?) {
+        Log.i("TAG", "onInfo: $info" )
+        updateResult(info, "onInfo")
     }
 }
