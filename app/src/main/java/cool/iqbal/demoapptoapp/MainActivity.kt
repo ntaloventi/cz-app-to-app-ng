@@ -28,14 +28,14 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         QRIS,
         CDCP
     }
-    private var tvTag:TextView? = null
-    private var tvResult:TextView? = null
+    private lateinit var tvTag:TextView
+    private lateinit var tvResult:TextView
     val gson = GsonBuilder().setPrettyPrinting().create()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        /*setContentView(R.layout.activity_main)
 
         tvTag = findViewById(R.id.tvTag)
         tvResult = findViewById(R.id.tvResult)
@@ -69,13 +69,19 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         btnDp.setOnClickListener {
             data.amount = getRandomAmount()
             jumpApp.withData(data).cashDeposit()
-        }
+        }*/
 
         /*payment request */
+        setContentView(R.layout.activity_second)
 
-        val host = "https://iqhost.icu/"
+        tvTag = findViewById(R.id.tvTag)
+        tvResult = findViewById(R.id.tvResult)
+
+        val host = "https://viper.cashlez.com/"
+        //val host = "https://iqhost.icu/"
         val apiKey = "Some-Api-Key"
-        val bridgeApi = BridgeApi.initBridge(this, this).withHost(host).withApiKey(apiKey)
+        val useWs = true // default is using sse, true using ws
+        val bridgeApi = BridgeApi.initBridge(this, this).withHost(host).withApiKey(apiKey).useWebSockeT(useWs)
         val paymentDataRequest = PaymentRequest().apply {
             posReqType = "Kiosk"
             clientId = "CLID-9512DD2103143011"
@@ -147,7 +153,8 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
             ?.let { gson.toJson(gson.fromJson(it, Any::class.java)) }
             ?: result
 
-        runOnUiThread {
+        Log.e("TAG", "stringToPrint: " + stringToPrint)
+        tvTag?.post {
             tvTag?.text = tag
             tvResult?.text = stringToPrint
         }
@@ -180,6 +187,10 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         if (!eventType.equals("heartbeat")){
             updateResult(data, "onSseEvent - $eventType");
         }
+    }
+
+    override fun onWsEvent(message: String?) {
+        updateResult(message, "onWsEvent")
     }
 
     override fun onInfo(info: String?) {

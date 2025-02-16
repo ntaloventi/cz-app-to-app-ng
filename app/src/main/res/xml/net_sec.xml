@@ -2,5 +2,7 @@
 <network-security-config xmlns:tools="http://schemas.android.com/tools">
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">192.168.100.6</domain>
+        <domain includeSubdomains="true">iqhost.icu</domain>
+        <domain includeSubdomains="true">viper.cashlez.com</domain>
     </domain-config>
 </network-security-config>
