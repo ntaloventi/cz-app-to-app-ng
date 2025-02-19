@@ -44,6 +44,16 @@
         app:layout_constraintBottom_toTopOf="@id/btnQris"
         app:layout_constraintStart_toStartOf="@id/btnQris"/>
 
+    <EditText
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="iqbal"
+        android:id="@+id/etUserName"
+        app:layout_constraintTop_toTopOf="@id/tvTag"
+        app:layout_constraintBottom_toBottomOf="@id/tvTag"
+        app:layout_constraintStart_toStartOf="@id/btnQris"
+        app:layout_constraintEnd_toEndOf="@id/btnQris"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

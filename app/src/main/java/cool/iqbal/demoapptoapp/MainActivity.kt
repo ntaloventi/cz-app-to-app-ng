@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.GsonBuilder
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
     }
     private lateinit var tvTag:TextView
     private lateinit var tvResult:TextView
+    private lateinit var etUserName:EditText
     val gson = GsonBuilder().setPrettyPrinting().create()
 
     @SuppressLint("MissingInflatedId")
@@ -76,22 +78,23 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
 
         tvTag = findViewById(R.id.tvTag)
         tvResult = findViewById(R.id.tvResult)
+        etUserName = findViewById(R.id.etUserName)
 
         val host = "https://viper.cashlez.com/"
-        //val host = "https://iqhost.icu/"
+//        val host = "hhttps://learning-cat-saving.ngrok-free.app/"
         val apiKey = "Some-Api-Key"
         val useWs = true // default is using sse, true using ws
         val bridgeApi = BridgeApi.initBridge(this, this).withHost(host).withApiKey(apiKey).useWebSockeT(useWs)
         val paymentDataRequest = PaymentRequest().apply {
             posReqType = "Kiosk"
             clientId = "CLID-9512DD2103143011"
-            deviceUser = "iqbal"
             status = "Pending"
             callbackUrl = "https://learning-cat-saving.ngrok-free.app/api-callback"
         }
 
         val btnCdcp:Button = findViewById(R.id.btnCdcp)
         btnCdcp.setOnClickListener{
+            paymentDataRequest.deviceUser = getUsernameInUse()
             paymentDataRequest.amount = getRandomAmount().toLong()
             paymentDataRequest.requestId = "ReqId-" + getStampId()
             paymentDataRequest.invoiceNumber = "inv-" + getStampId()
@@ -102,6 +105,7 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
 
         val btnQris:Button = findViewById(R.id.btnQris)
         btnQris.setOnClickListener{
+            paymentDataRequest.deviceUser = getUsernameInUse()
             paymentDataRequest.amount = getRandomAmount().toLong()
             paymentDataRequest.requestId = "ReqId-" + getStampId()
             paymentDataRequest.invoiceNumber = "inv-" + getStampId()
@@ -196,5 +200,9 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
     override fun onInfo(info: String?) {
         Log.i("TAG", "onInfo: $info" )
         updateResult(info, "onInfo")
+    }
+
+    fun getUsernameInUse() : String {
+        return etUserName.text.toString()
     }
 }
