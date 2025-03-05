@@ -57,75 +57,6 @@
         app:layout_constraintStart_toStartOf="@id/btnTf"
         app:layout_constraintEnd_toEndOf="@id/btnTf"/>
 
-
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnCdcp"
-        android:text="Card Payment"
-        android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@id/btnWd"
-        app:layout_constraintStart_toStartOf="@id/btnCb"
-        app:layout_constraintEnd_toEndOf="@id/btnCb"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cdcp"
-        android:layout_marginBottom="5dp"
-        app:layout_constraintBottom_toTopOf="@id/btnCdcp"
-        app:layout_constraintStart_toStartOf="@id/btnCdcp"/>
-
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnQris"
-        android:text="Qris Payment"
-        app:layout_constraintTop_toTopOf="@id/btnCdcp"
-        app:layout_constraintStart_toStartOf="@id/btnTf"
-        app:layout_constraintEnd_toEndOf="@id/btnTf"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Qris"
-        android:layout_marginBottom="5dp"
-        app:layout_constraintBottom_toTopOf="@id/btnQris"
-        app:layout_constraintStart_toStartOf="@id/btnQris"/>
-
-    <EditText
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/etUserName"
-        android:hint="Username"
-        android:text="iqbal"
-        android:layout_marginStart="100dp"
-        app:layout_constraintTop_toBottomOf="@id/btnCdcp"
-        app:layout_constraintStart_toStartOf="@id/btnCdcp"
-        app:layout_constraintEnd_toEndOf="@id/btnQris"/>
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="UserName"
-        app:layout_constraintTop_toTopOf="@id/etUserName"
-        app:layout_constraintBottom_toBottomOf="@id/etUserName"
-        app:layout_constraintStart_toStartOf="@id/btnCdcp"/>
-
-    <EditText
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/etClientId"
-        android:hint="Client Id"
-        android:text="CLID-9512DD2103143011"
-        app:layout_constraintTop_toBottomOf="@id/etUserName"
-        app:layout_constraintStart_toStartOf="@id/etUserName"
-        app:layout_constraintEnd_toEndOf="@id/etUserName"/>
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Client Id"
-        app:layout_constraintTop_toTopOf="@id/etClientId"
-        app:layout_constraintBottom_toBottomOf="@id/etClientId"
-        app:layout_constraintStart_toStartOf="@id/btnCdcp"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -133,7 +64,7 @@
         android:layout_margin="10dp"
         android:padding="10dp"
         android:hint="Result Type"
-        app:layout_constraintTop_toBottomOf="@id/etClientId"
+        app:layout_constraintTop_toBottomOf="@id/btnWd"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView

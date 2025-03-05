@@ -4,10 +4,10 @@ plugins {
 
 android {
     namespace 'cool.iqbal.jumpapp'
-    compileSdk 34
+    compileSdk rootProject.ext.config['TARGET_SDK']
 
     defaultConfig {
-        minSdk 24
+        minSdk rootProject.ext.config['MIN_SDK']
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -27,8 +27,8 @@ android {
 
 dependencies {
 
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation rootProject.ext.appCompat
+    implementation rootProject.ext.material
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'

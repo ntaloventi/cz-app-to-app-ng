@@ -32,13 +32,28 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
     private lateinit var tvTag:TextView
     private lateinit var tvResult:TextView
     private lateinit var etUserName:EditText
+    private lateinit var etClientId:EditText
     val gson = GsonBuilder().setPrettyPrinting().create()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*setContentView(R.layout.activity_main)
 
+        val flavor = BuildConfig.FLAVOR
+        if (flavor == "lab"){
+            setContentView(R.layout.activity_main)
+            initMiniAtmFeature()
+            initAppToAppFeature()
+        } else if (flavor == "miniAtm"){
+            setContentView(R.layout.activity_mini_atm)
+            initMiniAtmFeature()
+        } else if (flavor == "appToApp"){
+            setContentView(R.layout.activity_app_to_app)
+            initAppToAppFeature()
+        }
+    }
+
+    private fun initMiniAtmFeature(){
         tvTag = findViewById(R.id.tvTag)
         tvResult = findViewById(R.id.tvResult)
 
@@ -52,7 +67,6 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         btnCb.setOnClickListener {
             jumpApp.withData(data).checkBalance()
         }
-
         val btnTf: Button = findViewById(R.id.btnTf)
         btnTf.setOnClickListener {
             data.amount = getRandomAmount()
@@ -60,7 +74,6 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
             data.beneAccountNo = "15500088992"
             jumpApp.withData(data).transfer()
         }
-
         val btnWd: Button = findViewById(R.id.btnWd)
         btnWd.setOnClickListener {
             data.amount = getRandomAmount()
@@ -71,29 +84,28 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         btnDp.setOnClickListener {
             data.amount = getRandomAmount()
             jumpApp.withData(data).cashDeposit()
-        }*/
+        }
+    }
 
-        /*payment request */
-        setContentView(R.layout.activity_second)
-
+    private fun initAppToAppFeature(){
         tvTag = findViewById(R.id.tvTag)
         tvResult = findViewById(R.id.tvResult)
         etUserName = findViewById(R.id.etUserName)
+        etClientId = findViewById(R.id.etClientId);
 
-        val host = "https://viper.cashlez.com/"
-//        val host = "hhttps://learning-cat-saving.ngrok-free.app/"
-        val apiKey = "Some-Api-Key"
+        val host = BuildConfig.BaseUrl
+        val apiKey = BuildConfig.API_KEY
         val useWs = true // default is using sse, true using ws
         val bridgeApi = BridgeApi.initBridge(this, this).withHost(host).withApiKey(apiKey).useWebSockeT(useWs)
         val paymentDataRequest = PaymentRequest().apply {
             posReqType = "Kiosk"
-            clientId = "CLID-9512DD2103143011"
             status = "Pending"
             callbackUrl = "https://learning-cat-saving.ngrok-free.app/api-callback"
         }
 
         val btnCdcp:Button = findViewById(R.id.btnCdcp)
         btnCdcp.setOnClickListener{
+            paymentDataRequest.clientId = geClientId()
             paymentDataRequest.deviceUser = getUsernameInUse()
             paymentDataRequest.amount = getRandomAmount().toLong()
             paymentDataRequest.requestId = "ReqId-" + getStampId()
@@ -105,6 +117,7 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
 
         val btnQris:Button = findViewById(R.id.btnQris)
         btnQris.setOnClickListener{
+            paymentDataRequest.clientId = geClientId()
             paymentDataRequest.deviceUser = getUsernameInUse()
             paymentDataRequest.amount = getRandomAmount().toLong()
             paymentDataRequest.requestId = "ReqId-" + getStampId()
@@ -113,9 +126,7 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
             paymentDataRequest.requestAt = getCurrentStamp()
             bridgeApi.attemptRequestPayment(paymentDataRequest)
         }
-
     }
-
     private fun uriToHashMap(uri: Uri?): HashMap<String, String?> {
         val map = HashMap<String, String?>()
         if (uri != null) {
@@ -202,7 +213,11 @@ class MainActivity : AppCompatActivity(), JumApp.JumpListener, BridgeListener {
         updateResult(info, "onInfo")
     }
 
-    fun getUsernameInUse() : String {
+    private fun getUsernameInUse() : String {
         return etUserName.text.toString()
+    }
+
+    private fun geClientId() : String {
+        return etClientId.text.toString()
     }
 }
