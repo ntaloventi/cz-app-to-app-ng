@@ -1,17 +1,14 @@
-package cool.iqbal.jump_app;
+package cool.iqbal.jumpapp;
 
 import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.Objects;
 
 public class JumApp {
     private static JumpBuilder jumpBuilder;
@@ -65,7 +62,9 @@ public class JumApp {
             this.activity = activity;
 
             nextLauncher = activity.registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                Log.e("TAG", "initJumpApp: " + result.toString() );
                 if (result.getResultCode() == RESULT_OK){
+                    Log.e("TAG", "initJumpApp: " + result.getData() );
                     listener.onRawResult(result.getData());
                 } else {
                     listener.onCancel();
@@ -98,6 +97,10 @@ public class JumApp {
                 sbUri.append("&beneAccountNo=");
                 sbUri.append(data.getBeneAccountNo());
             }
+            /*sample additional query String*/
+            sbUri.append("&customerRefNo=BL123456");
+            sbUri.append("&csr=BL654321");
+
             String strUri = sbUri.toString();
             intent.setAction("android.intent.action.VIEW");
             intent.setData(Uri.parse(strUri));

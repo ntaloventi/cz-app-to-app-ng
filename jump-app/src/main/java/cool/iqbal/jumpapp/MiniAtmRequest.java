@@ -1,4 +1,4 @@
-package cool.iqbal.jump_app;
+package cool.iqbal.jumpapp;
 
 public class MiniAtmRequest {
     private boolean launcher;

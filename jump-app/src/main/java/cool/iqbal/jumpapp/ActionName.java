@@ -1,4 +1,4 @@
-package cool.iqbal.jump_app;
+package cool.iqbal.jumpapp;
 
 public enum ActionName {
     Action_Open(1, "open"),
